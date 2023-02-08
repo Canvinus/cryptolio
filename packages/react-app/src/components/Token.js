@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Layer, Image, Text } from 'react-konva';
 
-export const URLImage = (props) => {
+export const Token = (props) => {
   const [image, setImage] = useState(null);
   const [x, setX] = useState(null);
   const [y, setY] = useState(null);

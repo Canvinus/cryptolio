@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Stage, Layer, Text } from 'react-konva';
-import { URLImage } from './URLImage'
+import { Token } from './Token'
 
 export const TokenView = ({data, width, height}) => {
   return (
     <Stage  width={width} height={height}>
       {data &&
           data.map((token) =>
-          <URLImage
+          <Token
             key={token.symbol}
             width={32}
             height={32}
