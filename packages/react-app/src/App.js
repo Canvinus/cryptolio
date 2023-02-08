@@ -79,7 +79,7 @@ function App() {
           <button className='button is-small ml-1 mr-5' >Search</button>
           <WalletButton setAccount={handleAccountChange}/>
         </div>
-        <TokenVIew data={data} width={window.innerWidth} height={640} />
+        <TokenView data={data} width={window.innerWidth} height={640} />
         <div className='container is-max-widescreen is-align-items-center'>
           {data ?
               data.map((token) => 
