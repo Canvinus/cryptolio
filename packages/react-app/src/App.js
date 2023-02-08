@@ -1,15 +1,13 @@
-import { useQuery } from "@apollo/client";
-import { Contract } from "@ethersproject/contracts";
 import { shortenAddress, useCall, useEthers, useLookupAddress } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
-import { Body, Button, Container, Header, Image, Link } from "./components";
 import logo from "./ethereumLogo.png";
 
-import { addresses, abis } from "@my-app/contracts";
-import GET_TRANSFERS from "./graphql/subgraph";
+import axios from 'axios';
 
-function WalletButton() {
+import { TokenView } from './components/TokenView';
+
+function WalletButton({setAccount}) {
   const [rendered, setRendered] = useState("");
 
   const ens = useLookupAddress();
@@ -23,6 +21,7 @@ function WalletButton() {
     } else {
       setRendered("");
     }
+    setAccount(account);
   }, [account, ens, setRendered]);
 
   useEffect(() => {
@@ -32,59 +31,68 @@ function WalletButton() {
   }, [error]);
 
   return (
-    <Button
-      onClick={() => {
-        if (!account) {
-          activateBrowserWallet();
-        } else {
-          deactivate();
-        }
-      }}
-    >
-      {rendered === "" && "Connect Wallet"}
-      {rendered !== "" && rendered}
-    </Button>
+    <>
+      <button className='button'
+        onClick={() => {
+          if (!account) {
+            activateBrowserWallet();
+          } else {
+            deactivate();
+          }
+        }}
+      >
+        {rendered === "" && "Connect Wallet"}
+        {rendered !== "" && rendered}
+      </button>
+    </>
   );
 }
 
 function App() {
-  // Read more about useDapp on https://usedapp.io/
-  const { error: contractCallError, value: tokenBalance } =
-    useCall({
-       contract: new Contract(addresses.ceaErc20, abis.erc20),
-       method: "balanceOf",
-       args: ["0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C"],
-    }) ?? {};
 
-  const { loading, error: subgraphQueryError, data } = useQuery(GET_TRANSFERS);
+  const [account, setAccount] = useState(null);
+  const handleAccountChange = (acc) => {
+    setAccount(acc);
+  }
+
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    if (subgraphQueryError) {
-      console.error("Error while querying subgraph:", subgraphQueryError.message);
-      return;
+    // axios('http://localhost:4000/getData?address=0xd8da6bf26964af9d7eed9e03e53415d37aa96045').then(({ fetchedData }) => {
+    //   setData(fetchedData);
+    // });
+    const loadData = async () => {
+      const res = await fetch('/data.json');
+      const json_res = await res.json();
+      setData(json_res.tokens);
     }
-    if (!loading && data && data.transfers) {
-      console.log({ transfers: data.transfers });
-    }
-  }, [loading, subgraphQueryError, data]);
+
+    !data && loadData();
+    console.log(data);
+  }, [data]);
 
   return (
-    <Container>
-      <Header>
-        <WalletButton />
-      </Header>
-      <Body>
-        <Image src={logo} alt="ethereum-logo" />
-        <p>
-          Edit <code>packages/react-app/src/App.js</code> and save to reload.
-        </p>
-        <Link href="https://reactjs.org">
-          Learn React
-        </Link>
-        <Link href="https://usedapp.io/">Learn useDapp</Link>
-        <Link href="https://thegraph.com/docs/quick-start">Learn The Graph</Link>
-      </Body>
-    </Container>
+      <>
+        <div className='container is-align-items-center is-flex is-flex-direction-row is-max-widescreen'>
+          <img className='image mt-2 mb-4 mr-5' src={logo} alt='eth-logo' width={32} height={32} />
+          <input className='input is-small ml-2' type="text"/>
+          <button className='button is-small ml-1 mr-5' >Search</button>
+          <WalletButton setAccount={handleAccountChange}/>
+        </div>
+        <TokenVIew data={data} width={window.innerWidth} height={640} />
+        <div className='container is-max-widescreen is-align-items-center'>
+          {data ?
+              data.map((token) => 
+                    <div key={token.symbol} className='box is-align-content-center mr-2 mb-2'>
+                      <p>Symbol: {token.symbol}</p>
+                      <img src={token.logo} alt='token logo' width={32} height={32}></img>
+                      <p>Value: {token.totalValue}$</p>
+                    </div>)
+          :
+          console.log('Loading...')
+          }
+        </div>
+      </>
   );
 }
 

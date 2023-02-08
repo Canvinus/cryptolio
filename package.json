@@ -23,5 +23,9 @@
     "packages": [
       "packages/*"
     ]
+  },
+  "dependencies": {
+    "@moralisweb3/common-evm-utils": "^2.12.0",
+    "moralis": "^2.12.0"
   }
 }
