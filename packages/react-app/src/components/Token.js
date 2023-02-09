@@ -69,19 +69,17 @@ export const Token = (props) => {
   // }
 
   return (
-    <Group>
+    <Group
+      onClick={click}
+      x={x} 
+      y={y}>
       <Image
-        onClick={click}
-        x={x} 
-        y={y}
         width={props.width}
         height={props.height}
         image={image}
       />
       {clicked && <Text
         text={props.text}
-        x={x} 
-        y={y}
       />}
     </Group>
   );
