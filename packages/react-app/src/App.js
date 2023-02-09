@@ -6,6 +6,8 @@ import logo from "./ethereumLogo.png";
 import axios from 'axios';
 
 import { TokenView } from './components/TokenView';
+import { TokenTable } from './components/TokenTable';
+import { Slider } from './components/Slider';
 
 function WalletButton({setAccount}) {
   const [rendered, setRendered] = useState("");
@@ -73,21 +75,19 @@ function App() {
 
   return (
       <>
-        <div className='container is-align-items-center is-flex is-flex-direction-row is-max-widescreen'>
-          <img className='image mt-2 mb-4 mr-5' src={logo} alt='eth-logo' width={32} height={32} />
-          <input className='input is-small ml-2' type="text"/>
-          <button className='button is-small ml-1 mr-5' >Search</button>
-          <WalletButton setAccount={handleAccountChange}/>
+        <div className='navbar is-dark is-fixed-top'>
+          <div className='container is-align-items-center is-flex is-flex-direction-row is-max-widescreen'>
+            <img className='image mt-2 mb-4 mr-5' src={logo} alt='eth-logo' width={32} height={32} />
+            <input className='input is-small ml-2' type="text"/>
+            <button className='button is-small ml-1 mr-5' >Search</button>
+            <WalletButton setAccount={handleAccountChange}/>
+          </div>
         </div>
-        <TokenView data={data} width={window.innerWidth} height={640} />
-        <div className='container is-max-widescreen is-align-items-center'>
+        <Slider step='1' min='1' max='10'/>
+        <TokenView className='token-view' data={data} width={window.innerWidth} height={640} />
+        <div className='token-list-wrapper container is-max-widescreen is-align-items-center'>
           {data ?
-              data.map((token) => 
-                    <div key={token.symbol} className='box is-align-content-center mr-2 mb-2'>
-                      <p>Symbol: {token.symbol}</p>
-                      <img src={token.logo} alt='token logo' width={32} height={32}></img>
-                      <p>Value: {token.totalValue}$</p>
-                    </div>)
+            <TokenTable data={data}/>
           :
           console.log('Loading...')
           }

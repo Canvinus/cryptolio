@@ -16,5 +16,27 @@ code {
 }
 
 #root {
-  background-color: #4a4a4a;;
+  background-color: #4a4a4a;
+}
+
+.slider-wrapper {
+  padding-top: 6.75rem;
+  padding-bottom: 2rem;
+}
+
+.slider-value {
+  width: 5rem;
+}
+
+.slider {
+  width: 35rem;
+}
+
+.token-view {
+  background-color: gainsboro;
+}
+
+.token-list-wrapper {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
 }

@@ -47,7 +47,7 @@ async function getDemoData(address) {
   });
   tokens = tokens.filter((token) => token !== undefined)
 
-  let delay = 0; const delayIncrement = 1500;
+  let delay = 0; const delayIncrement = 100;
   const promises = tokens.map(async (token) => {
     delay += delayIncrement;
     return new Promise(resolve => setTimeout(resolve, delay)).then(async () => {
@@ -57,6 +57,8 @@ async function getDemoData(address) {
   });
 
   tokens = await Promise.all(promises);
+
+  tokens.sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1));
   
   // // Get the nfts
   // const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({

@@ -33,13 +33,13 @@ export const Token = (props) => {
     if(x <= 0) {
       setStepX(getStep(1));
     }
-    else if(x >= props.stageWidth) {
+    else if(x >= props.stageWidth - props.width) {
       setStepX(getStep(-1));
     }
     if(y <= 0) {
       setStepY(getStep(1));
     }
-    else if(y >= props.stageHeight) {
+    else if(y >= props.stageHeight - props.height) {
       setStepY(getStep(-1));
     }
   
