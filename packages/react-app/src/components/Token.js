@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Layer, Image, Text } from 'react-konva';
+import { useInterval } from 'usehooks-ts';
 
 export const Token = (props) => {
   const [image, setImage] = useState(null);
   const [x, setX] = useState(Math.random() * props.stageWidth);
   const [y, setY] = useState(Math.random() * props.stageHeight);
   const [clicked, setClicked] = useState(false);
+
+  const [stepX, setStepX] = useState(-1); 
+  const [stepY, setStepY] = useState(-1);
 
   const click = () => {
     setClicked((prev) => !prev);
@@ -20,38 +24,28 @@ export const Token = (props) => {
     img.src = props.src;
     setImage(img);
   }
-
+  
   const randomMove = () => {
-    let stepX = 1;
     if(x <= 0) {
-      stepX = 1;
+      setStepX(1);
     }
     else if(x >= props.stageWidth) {
-      stepX = -1;
+      setStepX(-1);
     }
-    let stepY = 1;
     if(y <= 0) {
-      stepY = 1;
+      setStepY(1);
     }
     else if(y >= props.stageHeight) {
-      stepY = -1;
+      setStepY(-1);
     }
-    console.log(x, props.stageWidth);
-    console.log(y, props.stageHeight);
-
+  
     setX(prev => prev + stepX);
     setY(prev => prev + stepY);
   }
 
-  useEffect(() => {
-
-    const intervalId = setInterval(() => {
-      randomMove();
-    }, 10);
-    
-    return () => clearInterval(intervalId);
-
-  }, [])
+  useInterval(() => {
+    randomMove();
+  }, 1);
 
   const onDrag = (e) => {
     const x = e.target.x();
