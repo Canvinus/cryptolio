@@ -41,6 +41,20 @@ code {
   padding-bottom: 3rem;
 }
 
+.message-container {
+  background: gainsboro;
+  padding-top: 6.5rem;
+  padding-bottom: 38rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-error {
+  text-align: center;
+  width: 25rem;
+}
+
 .loader-container {
   width: 100%;
   height: 100vh;
