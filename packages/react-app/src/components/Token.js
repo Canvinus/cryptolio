@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Layer, Image, Text } from 'react-konva';
+import {Image, Text, Group } from 'react-konva';
+import { useInterval } from 'usehooks-ts';
 
 export const Token = (props) => {
   const [image, setImage] = useState(null);
@@ -21,71 +22,67 @@ export const Token = (props) => {
     setImage(img);
   }
 
+  const getStep = (direction) => {
+    return Math.random() * direction;
+  }
+
+  const [stepX, setStepX] = useState(getStep(Math.random() > 0.5 ? -1 : 1)); 
+  const [stepY, setStepY] = useState(getStep(Math.random() > 0.5 ? -1 : 1));
+
   const randomMove = () => {
-    let stepX = 1;
     if(x <= 0) {
-      stepX = 1;
+      setStepX(getStep(1));
     }
     else if(x >= props.stageWidth) {
-      stepX = -1;
+      setStepX(getStep(-1));
     }
-    let stepY = 1;
     if(y <= 0) {
-      stepY = 1;
+      setStepY(getStep(1));
     }
     else if(y >= props.stageHeight) {
-      stepY = -1;
+      setStepY(getStep(-1));
     }
-    console.log(x, props.stageWidth);
-    console.log(y, props.stageHeight);
-
+  
     setX(prev => prev + stepX);
     setY(prev => prev + stepY);
   }
 
-  useEffect(() => {
+  useInterval(() => {
+    if(clicked)
+      return;
+    randomMove();
+  }, 1);
 
-    const intervalId = setInterval(() => {
-      randomMove();
-    }, 10);
-    
-    return () => clearInterval(intervalId);
-
-  }, [])
-
-  const onDrag = (e) => {
-    const x = e.target.x();
-    const y = e.target.y();
-
-    if(x <= 0) {
-      e.target.x(0);
-    }
-    else if(x >= props.stageWidth) {
-      e.target.x(props.stageWidth - e.target.width());
-    }
-    if(y <= 0) {
-      e.target.y(0);
-    }
-    else if(y >= props.stageHeight) {
-      e.target.y(props.stageHeight - e.target.height())
-    }
-  }
+  // const onDrag = () => {
+  //   if(x <= 0) {
+  //     setX(0);
+  //   }
+  //   else if(x >= props.stageWidth) {
+  //     setX(props.stageWidth - props.width());
+  //   }
+  //   if(y <= 0) {
+  //     setY(0);
+  //   }
+  //   else if(y >= props.stageHeight) {
+  //     setY(props.stageHeight - props.height())
+  //   }
+  // }
 
   return (
-    <Layer 
-      draggable 
-      onDragEnd={onDrag}
-      onClick={click}
-      x={x} 
-      y={y}>
+    <Group>
       <Image
+        onClick={click}
+        x={x} 
+        y={y}
         width={props.width}
         height={props.height}
         image={image}
       />
-      {clicked && <Text 
+      {clicked && <Text
         text={props.text}
-        fontSize={32}/>}
-    </Layer>
+        x={x} 
+        y={y}
+      />}
+    </Group>
   );
 }
