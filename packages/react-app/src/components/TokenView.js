@@ -3,8 +3,10 @@ import { Stage, Layer, Text } from 'react-konva';
 import { Token } from './Token'
 
 export const TokenView = ({data, width, height}) => {
+
   return (
     <Stage  width={width} height={height}>
+      <Layer>
       {data &&
           data.map((token) =>
           <Token
@@ -17,6 +19,7 @@ export const TokenView = ({data, width, height}) => {
             text={token.symbol}
             />)
         }
+      </Layer>
     </Stage>
   );
 }
