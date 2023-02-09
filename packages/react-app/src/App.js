@@ -7,6 +7,8 @@ import axios from 'axios';
 
 import { TokenView } from './components/TokenView';
 import { TokenTable } from './components/TokenTable';
+import { Loading } from './components/utils/Loading';
+import { ErrorMessage } from './components/utils/ErrorMessage';
 
 function WalletButton({setAccount}) {
   const [rendered, setRendered] = useState("");
@@ -58,6 +60,8 @@ function App() {
 
   const [data, setData] = useState(null);
   
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const loadData = async () => {
       // const res = await fetch('/data.json');
@@ -65,10 +69,13 @@ function App() {
       // setData(json_res);
       axios(`http://localhost:4000/getData?address=${account}`).then((response) => {
         setData(response.data);
-      });
-    }
+      }).catch(function (err) { 
+          setError(err.message)
+        });
+      }
 
     !data && account && loadData();
+    data && data.tokens.length === 0 && setError('Empty Wallet');
   }, [data, account]);
 
   const [searchBar, setSearchBar] = useState('');
@@ -79,7 +86,11 @@ function App() {
   const handleSearchClick = () => {
     setAccount(searchBar)
     setData(null);
+    setError(null);
   }
+
+  useEffect(() => {
+  }, [error])
 
   return (
       <>
@@ -91,15 +102,18 @@ function App() {
             <WalletButton setAccount={handleAccountChange}/>
           </div>
         </div>
-        {data ?
-          <>
-            <TokenView className='token-view' data={data} width={window.innerWidth} height={640} />
-            <div className='token-list-wrapper container is-max-widescreen is-align-items-center'>
-              <TokenTable data={data}/>
-            </div>
-          </>
+        {!error ?
+            data ?
+            <>
+              <TokenView className='token-view' data={data} width={window.innerWidth} height={640} />
+              <div className='token-list-wrapper container is-max-widescreen is-align-items-center'>
+                <TokenTable data={data}/>
+              </div>
+            </>
+            :
+            <Loading />
           :
-          <div className='loader-container'></div>
+          <ErrorMessage message={error}/>
         }
       </>
   );
