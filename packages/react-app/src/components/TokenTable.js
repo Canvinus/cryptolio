@@ -12,7 +12,7 @@ export const TokenTable = ({data}) => {
                 </tr>
               </thead>
               <tbody>
-              {data.map((token, i) => 
+              {data.tokens.map((token, i) => 
                 <tr key={token.symbol}>
                     <th>{i}</th>
                     <td><a 

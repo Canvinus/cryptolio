@@ -59,7 +59,8 @@ async function getDemoData(address) {
   tokens = await Promise.all(promises);
 
   tokens.sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1));
-  
+
+  const maxValue = Math.max(...tokens.map(token => token.totalValue));
   // // Get the nfts
   // const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
   //   address,
@@ -74,7 +75,7 @@ async function getDemoData(address) {
   //   metadata: nft.result.metadata,
   // }))
 
-  return { native, tokens }
+  return { native, tokens, maxValue }
 }
 
 async function getTokenPrice (name, address) {

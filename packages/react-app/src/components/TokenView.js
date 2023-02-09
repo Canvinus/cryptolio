@@ -1,20 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Stage, Layer, Text, Group } from 'react-konva';
 import { Token } from './Token'
+import { Slider } from './Slider';
 
 export const TokenView = ({className, data, width, height}) => {
-  const minValue = 1;
-  const scale = 0.1 ** (4 - 0.5);
-  const [minScale, setMinScale] = useState(10);
+  const [minValue, setMinValue] = useState(1);
+  const [factor, setFactor] = useState(Math.round(data.maxValue).toString().length - 2);
+  const scale = 0.1 ** (factor - 0.5);
+
+  const handleSliderChange = (e) => {
+    setMinValue(e.target.value);
+  }
+
+  useEffect(() => {
+
+  }, [minValue])
 
   return (
-    <div className={className}>
-      <Stage  width={width} height={height}>
-        <Layer>
-        {data &&
-            data.map((token) => {
+    <>
+      <Slider step='1' min='1' max='10' value={minValue} onChange={handleSliderChange}/>
+      <div className={className}>
+        <Stage  width={width} height={height}>
+          <Layer>
+          {
+            data.tokens.map((token) => {
               const tSide = scale * (token.totalValue < minValue ? minValue : token.totalValue);
-              if (tSide <= minScale) {
+              if (tSide <= 10) {
                 return <Group key={token.symbol}></Group>
               }
               return (<Token
@@ -28,8 +39,9 @@ export const TokenView = ({className, data, width, height}) => {
               />)
             })
           }
-        </Layer>
-      </Stage>
-    </div>
+          </Layer>
+        </Stage>
+      </div>
+    </>
   );
 }

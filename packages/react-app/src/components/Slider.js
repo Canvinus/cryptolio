@@ -1,10 +1,6 @@
 import { useState } from 'react';
 
-export const Slider = ({step, min, max}) => {
-    const [value, setValue] = useState(min);
-    const handleChange = (e) => {
-        setValue(e.target.value);   
-    }
+export const Slider = ({step, min, max, value, onChange}) => {
 
     return (
         <div className='slider-wrapper container is-dark is-align-items-center is-flex is-flex-direction-column'>
@@ -15,7 +11,7 @@ export const Slider = ({step, min, max}) => {
                 max={max}
                 value={value}
                 type="range"
-                onChange={handleChange} />
+                onChange={onChange} />
         </div>
     );
 }

@@ -7,7 +7,6 @@ import axios from 'axios';
 
 import { TokenView } from './components/TokenView';
 import { TokenTable } from './components/TokenTable';
-import { Slider } from './components/Slider';
 
 function WalletButton({setAccount}) {
   const [rendered, setRendered] = useState("");
@@ -58,40 +57,50 @@ function App() {
   }
 
   const [data, setData] = useState(null);
-
+  
   useEffect(() => {
-    // axios('http://localhost:4000/getData?address=0xd8da6bf26964af9d7eed9e03e53415d37aa96045').then(({ fetchedData }) => {
-    //   setData(fetchedData);
-    // });
     const loadData = async () => {
-      const res = await fetch('/data.json');
-      const json_res = await res.json();
-      setData(json_res.tokens);
+      // const res = await fetch('/data.json');
+      // const json_res = await res.json();
+      // setData(json_res);
+      axios(`http://localhost:4000/getData?address=${account}`).then((response) => {
+        setData(response.data);
+      });
     }
 
-    !data && loadData();
-    console.log(data);
-  }, [data]);
+    !data && account && loadData();
+  }, [data, account]);
+
+  const [searchBar, setSearchBar] = useState('');
+  const handleSearchBarChange = (e) => {
+    setSearchBar(e.target.value)
+  }
+
+  const handleSearchClick = () => {
+    setAccount(searchBar)
+    setData(null);
+  }
 
   return (
       <>
         <div className='navbar is-dark is-fixed-top'>
           <div className='container is-align-items-center is-flex is-flex-direction-row is-max-widescreen'>
             <img className='image mt-2 mb-4 mr-5' src={logo} alt='eth-logo' width={32} height={32} />
-            <input className='input is-small ml-2' type="text"/>
-            <button className='button is-small ml-1 mr-5' >Search</button>
+            <input className='input is-small ml-2' type="text" value={searchBar} onChange={handleSearchBarChange}/>
+            <button className='button is-small ml-1 mr-5' onClick={handleSearchClick}>Search</button>
             <WalletButton setAccount={handleAccountChange}/>
           </div>
         </div>
-        <Slider step='1' min='1' max='10'/>
-        <TokenView className='token-view' data={data} width={window.innerWidth} height={640} />
-        <div className='token-list-wrapper container is-max-widescreen is-align-items-center'>
-          {data ?
-            <TokenTable data={data}/>
+        {data ?
+          <>
+            <TokenView className='token-view' data={data} width={window.innerWidth} height={640} />
+            <div className='token-list-wrapper container is-max-widescreen is-align-items-center'>
+              <TokenTable data={data}/>
+            </div>
+          </>
           :
-          console.log('Loading...')
-          }
-        </div>
+          <div className='loader-container'></div>
+        }
       </>
   );
 }
