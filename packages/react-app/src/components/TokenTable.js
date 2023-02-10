@@ -14,7 +14,7 @@ export const TokenTable = ({data}) => {
               <tbody>
               {data.tokens.map((token, i) => 
                 <tr key={token.symbol}>
-                    <th>{i}</th>
+                    <th>{i + 1}</th>
                     <td><a 
                         className='has-text-link-dark'
                         href={`https://etherscan.io/address/${token.address}`}

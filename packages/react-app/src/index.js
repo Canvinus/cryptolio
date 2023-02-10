@@ -1,6 +1,8 @@
 import "./index.css";
 import 'bulma/css/bulma.min.css';
 import 'bulma-slider/dist/css/bulma-slider.min.css';
+import 'bulma-switch/dist/css/bulma-switch.min.css';
+import 'bulma-tooltip/dist/css/bulma-tooltip.min.css';
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { DAppProvider, Mainnet } from "@usedapp/core";
