@@ -1,58 +1,16 @@
-import { shortenAddress, useEthers, useLookupAddress } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
 import logo from "./ethereumLogo.png";
 
 import axios from 'axios';
 
+import { WalletButton } from './components/Wallet';
 import { TokenView } from './components/TokenView';
 import { TokenTable } from './components/TokenTable';
 import { Loading } from './components/utils/Loading';
 import { ErrorMessage } from './components/utils/ErrorMessage';
 
-function WalletButton({setAccount}) {
-  const [rendered, setRendered] = useState("");
-
-  const ens = useLookupAddress();
-  const { account, activateBrowserWallet, deactivate, error } = useEthers();
-
-  useEffect(() => {
-    if (ens) {
-      setRendered(ens);
-    } else if (account) {
-      setRendered(shortenAddress(account));
-    } else {
-      setRendered("");
-    }
-    setAccount(account);
-  }, [account, ens, setRendered]);
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error while connecting wallet:", error.message);
-    }
-  }, [error]);
-
-  return (
-    <>
-      <button className='button'
-        onClick={() => {
-          if (!account) {
-            activateBrowserWallet();
-          } else {
-            deactivate();
-          }
-        }}
-      >
-        {rendered === "" && "Connect Wallet"}
-        {rendered !== "" && rendered}
-      </button>
-    </>
-  );
-}
-
 function App() {
-
   const [account, setAccount] = useState(null);
   const handleAccountChange = (acc) => {
     setAccount(acc);
