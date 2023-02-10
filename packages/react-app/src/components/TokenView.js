@@ -18,7 +18,7 @@ export const TokenView = ({className, data, width, height}) => {
 
   return (
     <>
-      <Slider step='1' min='1' max='10' value={minValue} onChange={handleSliderChange}/>
+      <Slider step='1' min='1' max='10000' value={minValue} onChange={handleSliderChange}/>
       <div className={className}>
         <Stage  width={width} height={height}>
           <Layer>
