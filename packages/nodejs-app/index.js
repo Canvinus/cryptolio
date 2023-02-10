@@ -4,6 +4,7 @@ const cors = require("cors");
 const Moralis = require("moralis").default
 const { EvmChain } = require("@moralisweb3/common-evm-utils")
 const MORALIS_API_KEY = require("./config").MORALIS_API_KEY
+const badTokens = require('./config').badTokens
 
 const app = express()
 const port = 4000
@@ -18,7 +19,7 @@ app.use(
   })
 );
 
-async function getDemoData(address) {
+async function getData(address) {
   // Get native balance
   const nativeBalance = await Moralis.EvmApi.balance.getNativeBalance({
     address,
@@ -45,7 +46,8 @@ async function getDemoData(address) {
         balance: _balance
       }
   });
-  tokens = tokens.filter((token) => token !== undefined)
+
+  tokens = tokens.filter((token) => token !== undefined && !badTokens.includes(token.symbol))
 
   let delay = 0; const delayIncrement = 100;
   const promises = tokens.map(async (token) => {
@@ -99,7 +101,7 @@ async function getTokenPrice (name, address) {
 app.get("/getData", async (req, res) => {
   try {
     const address = req.query.address;
-    const data = await getDemoData(address)
+    const data = await getData(address)
     res.status(200)
     return res.json(data)
   } catch (error) {
