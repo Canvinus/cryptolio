@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 export const Slider = ({step, min, max, value, onChange}) => {
 
     return (

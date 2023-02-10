@@ -1,4 +1,4 @@
-import { shortenAddress, useCall, useEthers, useLookupAddress } from "@usedapp/core";
+import { shortenAddress, useEthers, useLookupAddress } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
 import logo from "./ethereumLogo.png";
@@ -84,9 +84,9 @@ function App() {
   }
 
   const handleSearchClick = () => {
-    setAccount(searchBar)
     setData(null);
     setError(null);
+    setAccount(searchBar)
   }
 
   useEffect(() => {

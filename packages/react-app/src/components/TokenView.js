@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Stage, Layer, Text, Group } from 'react-konva';
+import { Stage, Layer, Group } from 'react-konva';
 import { Token } from './Token'
 import { Slider } from './Slider';
 
