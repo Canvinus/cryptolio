@@ -3,6 +3,7 @@ import axios from 'axios';
 import logo from "./ethereumLogo.png";
 
 import { WalletButton } from './components/Wallet';
+import { Welcome } from "./components/utils/Welcome";
 import { TokenView } from './components/TokenView';
 import { TokenTable } from './components/TokenTable';
 import { Loading } from './components/utils/Loading';
@@ -72,12 +73,14 @@ const App = () => {
           <div className='container is-align-items-center is-flex is-flex-direction-row is-max-widescreen'>
             <img className='image mt-2 mb-4 mr-5' src={logo} alt='eth-logo' width={32} height={32} />
             <input 
-              className='input is-small ml-2' 
+              className='input is-small ml-2 has-tooltip-bottom' 
               type="text" 
               value={searchBar} 
               onChange={handleSearchBarChange} 
               onKeyDown={handleKeyDown}/>
-            <button className='button is-small ml-1 mr-5' onClick={handleSearchClick}>Search</button>
+            <button 
+              className='button is-small ml-1 mr-5' 
+              onClick={handleSearchClick}>Search</button>
             <div 
               className='field mr-4 mt-4 has-tooltip-bottom' 
               data-tooltip={internal ? switchTooltipText[1] : switchTooltipText[0]}>
@@ -87,18 +90,21 @@ const App = () => {
             <WalletButton setAccount={handleAccountChange}/>
           </div>
         </div>
-        {!error ?
-            data ?
-            <>
-              <TokenView className='token-view' data={data} width={window.innerWidth} height={640} />
-              <div className='token-list-wrapper container is-max-widescreen is-align-items-center'>
-                <TokenTable data={data}/>
-              </div>
-            </>
+        {account ? 
+          !error ?
+              data ?
+              <>
+                <TokenView className='token-view' data={data} width={window.innerWidth} height={640} />
+                <div className='token-list-wrapper container is-max-widescreen is-align-items-center'>
+                  <TokenTable data={data}/>
+                </div>
+              </>
+              :
+              <Loading />
             :
-            <Loading />
+            <ErrorMessage message={error}/>
           :
-          <ErrorMessage message={error}/>
+          <Welcome />
         }
       </>
   );

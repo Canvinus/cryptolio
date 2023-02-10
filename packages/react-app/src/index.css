@@ -65,3 +65,20 @@ code {
   background-size: 3rem 3rem;
   z-index: 1;
 }
+
+.content {
+  padding-top: 6.5rem;
+  padding-bottom: 38rem;
+  background-color: gainsboro;
+}
+
+.content > h1,h2 {
+  text-align: center;
+}
+
+.content > p {
+  padding-left: 15rem;
+  padding-right: 15rem;
+  text-align: left;
+  text-indent: 2rem;
+}
