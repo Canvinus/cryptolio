@@ -47,13 +47,17 @@ async function getData(address) {
   });
   tokens = tokens.filter((token) => token !== undefined)
 
+  let totalBalance = 0;
   let delay = 0; const delayIncrement = 100;
   const promises = tokens.map(async (token) => {
     delay += delayIncrement;
     return new Promise(resolve => setTimeout(resolve, delay)).then(async () => {
      const tokenPrice = await getTokenPrice(token.symbol, token.address);
-     if (tokenPrice && tokenPrice <= 10**9)
-      return {...token, usdPrice: Number(tokenPrice), totalValue: Number((token.balance * tokenPrice).toFixed(2))};
+     if (tokenPrice && tokenPrice <= 10**9) {
+      totalValue = Number((token.balance * tokenPrice).toFixed(2));
+      totalBalance += totalValue;
+      return { ...token, usdPrice: Number(tokenPrice), totalValue: totalValue };
+      }
     })
   });
   tokens = await Promise.all(promises);
@@ -61,6 +65,9 @@ async function getData(address) {
   tokens.sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1));
 
   const maxValue = Math.max(...tokens.map(token => token.totalValue));
+  tokens = tokens.map((token) => {
+    return { ...token, pct: token.totalValue / totalBalance }
+  });
   // // Get the nfts
   // const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
   //   address,
@@ -75,7 +82,7 @@ async function getData(address) {
   //   metadata: nft.result.metadata,
   // }))
 
-  return { native, tokens, maxValue }
+  return { native, tokens, maxValue, totalBalance }
 }
 
 async function getTokenPrice (name, address) {

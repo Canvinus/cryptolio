@@ -117,6 +117,10 @@ export const Main = () => {
         !error ? (
           data ? (
             <>
+              <div className='account-info container card'>
+                <h1>address: {account}</h1>
+                <h1>total: {data.totalBalance}</h1>
+              </div>
               <TokenView
                 className="token-view"
                 data={data}
