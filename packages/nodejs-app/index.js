@@ -42,7 +42,7 @@ async function getData(address) {
         symbol: _token.symbol,
         logo: _token.logo,
         address: _token.contractAddress._value,
-        balance: _balance
+        balance: Number(_balance.toFixed(2))
       }
   });
   tokens = tokens.filter((token) => token !== undefined)
@@ -52,8 +52,8 @@ async function getData(address) {
     delay += delayIncrement;
     return new Promise(resolve => setTimeout(resolve, delay)).then(async () => {
      const tokenPrice = await getTokenPrice(token.symbol, token.address);
-     if (tokenPrice <= 10**9)
-      return {...token, usdPrice: tokenPrice, totalValue: token.balance * tokenPrice};
+     if (tokenPrice && tokenPrice <= 10**9)
+      return {...token, usdPrice: Number(tokenPrice), totalValue: Number((token.balance * tokenPrice).toFixed(2))};
     })
   });
   tokens = await Promise.all(promises);
@@ -79,7 +79,6 @@ async function getData(address) {
 }
 
 async function getTokenPrice (name, address) {
-  console.log(name);
   let tokenPrice = null;
   try{ 
     const response = await Moralis.EvmApi.token.getTokenPrice({
@@ -87,10 +86,8 @@ async function getTokenPrice (name, address) {
       chain,
     });
     tokenPrice = response?.result.usdPrice;
-    console.log(tokenPrice);
   }
   catch(error){
-    console.log(error);
     tokenPrice = null;
   }
   return tokenPrice;

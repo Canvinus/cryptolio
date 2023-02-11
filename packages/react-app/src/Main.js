@@ -81,6 +81,7 @@ export const Main = () => {
             alt="eth-logo"
             width={32}
             height={32}
+            onClick={clearData}
           />
           <input
             className="input is-small ml-2 has-tooltip-bottom"

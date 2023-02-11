@@ -25,9 +25,9 @@ export const TokenTable = ({data}) => {
                             <img className='is-rounded' src={token.logo} alt='token logo' />
                         </figure>
                     </td>
-                    <td>{token.balance}</td>
-                    <td>{token.usdPrice}</td>
-                    <td>{token.totalValue} $</td>
+                    <td>{token.balance.toLocaleString()}</td>
+                    <td>{token.usdPrice.toLocaleString()}</td>
+                    <td>{token.totalValue.toLocaleString()} $</td>
                 </tr>)}
               </tbody>
         </table>
