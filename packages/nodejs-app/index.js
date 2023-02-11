@@ -4,7 +4,6 @@ const cors = require("cors");
 const Moralis = require("moralis").default
 const { EvmChain } = require("@moralisweb3/common-evm-utils")
 const MORALIS_API_KEY = require("./config").MORALIS_API_KEY
-const badTokens = require('./config').badTokens
 
 const app = express()
 const port = 4000
@@ -46,20 +45,19 @@ async function getData(address) {
         balance: _balance
       }
   });
-
-  tokens = tokens.filter((token) => token !== undefined && !badTokens.includes(token.symbol))
+  tokens = tokens.filter((token) => token !== undefined)
 
   let delay = 0; const delayIncrement = 100;
   const promises = tokens.map(async (token) => {
     delay += delayIncrement;
     return new Promise(resolve => setTimeout(resolve, delay)).then(async () => {
      const tokenPrice = await getTokenPrice(token.symbol, token.address);
-     return {...token, usdPrice: tokenPrice, totalValue: token.balance * tokenPrice};
+     if (tokenPrice <= 10**9)
+      return {...token, usdPrice: tokenPrice, totalValue: token.balance * tokenPrice};
     })
   });
-
   tokens = await Promise.all(promises);
-
+  tokens = tokens.filter((token) => token !== undefined)
   tokens.sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1));
 
   const maxValue = Math.max(...tokens.map(token => token.totalValue));
