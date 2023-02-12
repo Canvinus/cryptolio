@@ -138,7 +138,7 @@ export const Main = () => {
               type="checkbox"
               onChange={handleSwitchChange}
             />
-            <label for="switch"></label>
+            <label htmlFor="switch"></label>
           </div>
           <WalletButton setAccount={handleAccountChange} />
         </div>
@@ -154,12 +154,12 @@ export const Main = () => {
                 height={dimensions.height}
               />
               <div className='account-info box container is-align-content-center'>
-                <h1>address: {account}</h1>
+                <h1>address: <a href={`https://etherscan.io/address/${account}`} target='_blank' rel='noreferrer'>{account}</a></h1>
                 <h1 className='is-flex is-flex-direction-row'>native (ETH): {data.native.toLocaleString()}
                   <img src={ethSVG} alt='eth' size={16} width={16} />
-                  <h1> ({data.nativeInUsd.toLocaleString()} $) </h1>
                 </h1>
-                <h1>total (ERC-20): {data.totalBalance.toLocaleString()} $</h1>
+                <h1>native ($): {data.nativeInUsd.toLocaleString()} $ </h1>
+                <h1>ERC-20 ($): {data.totalBalance.toLocaleString()} $</h1>
               </div>
               <div className="table-container">
                 <TokenTable data={data} />
