@@ -19,12 +19,13 @@ code {
 
 #root {
   background-color: gainsboro;
+  height: 100%;
+  width: 100%;
 }
 
 .token-view {
-  margin-top: 6.5rem;
+  margin-top: 5.25rem;
   background-color: gainsboro;
-  width: 100%;
 }
 
 .searchbar {

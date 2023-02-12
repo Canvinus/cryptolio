@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import logo from './ethereumLogo.png';
+import ethSVG from './ethereum-svgrepo-com.svg';
 
 import { WalletButton } from "./components/Wallet";
 import { Welcome } from "./components/utils/Welcome";
@@ -9,10 +10,11 @@ import { TokenTable } from "./components/TokenTable";
 import { Loading } from "./components/utils/Loading";
 import { ErrorMessage } from "./components/utils/ErrorMessage";
 import { Chart } from "react-google-charts";
-
-import ethSVG from './ethereum-svgrepo-com.svg';
+import { SearchBar } from './components/SearchBar';
 
 export const Main = () => {
+  const NAV_WIDTH = 84;
+
   const [internalAcc, setInternalAcc] = useState(null);
   const handleAccountChange = (acc) => {
     setInternalAcc(acc);
@@ -22,19 +24,10 @@ export const Main = () => {
   };
 
   const [externalAcc, setExternalAcc] = useState(null);
-  const [searchBar, setSearchBar] = useState("");
-  const handleSearchBarChange = (e) => {
-    setSearchBar(e.target.value);
-  };
-  const handleSearchClick = () => {
-    setExternalAcc(searchBar);
+  const handleSearch= (value) => {
+    setExternalAcc(value);
     if (!internal) {
       clearData();
-    }
-  };
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSearchClick();
     }
   };
 
@@ -74,16 +67,16 @@ export const Main = () => {
     data && data.tokens.length === 0 && setError("Empty Wallet");
   }, [data, account]);
   
-  let test;
+  let chartData;
   let otherValue = 0;
   if (data) {
-    test = [['symbol', 'totalValue']].concat(data.tokens.map((token) => {
+    chartData = [['symbol', 'totalValue']].concat(data.tokens.map((token) => {
       if (token.pct >= 0.01)
         return [token.symbol, token.totalValue]
       else
         otherValue += token.totalValue;
     }).filter(item => item !== undefined))
-    test.push(['Other', otherValue])
+    chartData.push(['Other', otherValue])
   }
   
   const [dimensions, setDimensions] = React.useState({
@@ -113,19 +106,7 @@ export const Main = () => {
             height={32}
             onClick={clearData}
           />
-          <input
-            className="searchbar input is-small ml-2 has-tooltip-bottom"
-            type="text"
-            value={searchBar}
-            onChange={handleSearchBarChange}
-            onKeyDown={handleKeyDown}
-          />
-          <button
-            className="button is-small ml-1 mr-5"
-            onClick={handleSearchClick}
-          >
-            Search
-          </button>
+          <SearchBar handleSearch={handleSearch}/>
           <div
             className="field mr-4 mt-4 has-tooltip-bottom"
             data-tooltip={
@@ -146,12 +127,12 @@ export const Main = () => {
       {account ? (
         !error ? (
           data ? (
-            <>
+            <div style={{backgroundColor: 'gainsboro'}}>
               <TokenView
                 className="token-view"
                 data={data}
                 width={dimensions.width}
-                height={dimensions.height}
+                height={dimensions.height - NAV_WIDTH}
               />
               <div className='account-info box container is-align-content-center'>
                 <h1>address: <a href={`https://etherscan.io/address/${account}`} target='_blank' rel='noreferrer'>{account}</a></h1>
@@ -168,11 +149,11 @@ export const Main = () => {
                 <Chart
                     options={{backgroundColor: 'none', legend: { position: 'top', alignment: 'center' }}}
                     chartType="PieChart"
-                    data={test}
+                    data={chartData}
                     width={"100%"}
                     height={"40rem"} />
               </div>
-            </>
+            </div>
           ) : (
             <Loading />
           )
