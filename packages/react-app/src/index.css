@@ -1,9 +1,11 @@
 html {
   height: 100%;
+  width: 100%;
 }
 
 body {
   height: 100%;
+  width: 100%;
   margin: auto;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
   "Droid Sans", "Helvetica Neue", sans-serif;
@@ -16,24 +18,17 @@ code {
 }
 
 #root {
-  background-color: #4a4a4a;
-}
-
-.slider-wrapper {
-  padding-top: 6.75rem;
-  padding-bottom: 2rem;
-}
-
-.slider-value {
-  width: 5rem;
-}
-
-.slider {
-  width: 35rem;
+  background-color: gainsboro;
 }
 
 .token-view {
+  margin-top: 6.5rem;
   background-color: gainsboro;
+  width: 100%;
+}
+
+.searchbar {
+  width: 30rem;
 }
 
 .token-list-wrapper {
@@ -72,17 +67,12 @@ code {
   background-color: gainsboro;
 }
 
-.content > h1,h2 {
+.content > h1,h2,p {
   text-align: center;
 }
 
-.content > p {
-  padding-left: 15rem;
-  padding-right: 15rem;
-  text-align: left;
-  text-indent: 2rem;
-}
-
-.account-info {
-  padding-top: 6.5rem;
+.chart-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  background-color: gainsboro;
 }

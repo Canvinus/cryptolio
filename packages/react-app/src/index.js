@@ -6,8 +6,8 @@ import 'bulma-tooltip/dist/css/bulma-tooltip.min.css';
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { DAppProvider, Mainnet } from "@usedapp/core";
+import { createRoot } from 'react-dom/client';
 import React from "react";
-import ReactDOM from "react-dom";
 
 import App from "./App";
 
@@ -29,13 +29,12 @@ const client = new ApolloClient({
   uri: "https://api.thegraph.com/subgraphs/name/paulrberg/create-eth-app",
 });
 
-ReactDOM.render(
-  <React.StrictMode>
-    <DAppProvider config={config}>
-      <ApolloProvider client={client}>
-        <App />
-      </ApolloProvider>
-    </DAppProvider>
-  </React.StrictMode>,
-  document.getElementById("root"),
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
+  <DAppProvider config={config}>
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  </DAppProvider>
 );

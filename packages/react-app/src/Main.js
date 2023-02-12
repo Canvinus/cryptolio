@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import logo from "./ethereumLogo.png";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import logo from './ethereumLogo.png';
 
 import { WalletButton } from "./components/Wallet";
 import { Welcome } from "./components/utils/Welcome";
@@ -8,6 +8,9 @@ import { TokenView } from "./components/TokenView";
 import { TokenTable } from "./components/TokenTable";
 import { Loading } from "./components/utils/Loading";
 import { ErrorMessage } from "./components/utils/ErrorMessage";
+import { Chart } from "react-google-charts";
+
+import ethSVG from './ethereum-svgrepo-com.svg';
 
 export const Main = () => {
   const [internalAcc, setInternalAcc] = useState(null);
@@ -70,10 +73,37 @@ export const Main = () => {
     !data && account && loadData();
     data && data.tokens.length === 0 && setError("Empty Wallet");
   }, [data, account]);
+  
+  let test;
+  let otherValue = 0;
+  if (data) {
+    test = [['symbol', 'totalValue']].concat(data.tokens.map((token) => {
+      if (token.pct >= 0.01)
+        return [token.symbol, token.totalValue]
+      else
+        otherValue += token.totalValue;
+    }).filter(item => item !== undefined))
+    test.push(['Other', otherValue])
+  }
+  
+  const [dimensions, setDimensions] = React.useState({
+      width: window.outerWidth,
+      height: window.outerHeight,
+  });
+  const handleResize = () => {
+      setDimensions({
+      width: window.outerWidth,
+      height: window.outerHeight,
+      });
+  }
+  useEffect(() => {
+    window.addEventListener('resize', handleResize, false);
+    return () => { window.removeEventListener('resize') }
+  }, []);
 
   return (
     <>
-      <div className="navbar is-dark is-fixed-top">
+      <div className="navbar is-dark is-fixed-top is-flex">
         <div className="container is-align-items-center is-flex is-flex-direction-row is-max-widescreen">
           <img
             className="image mt-2 mb-4 mr-5"
@@ -84,7 +114,7 @@ export const Main = () => {
             onClick={clearData}
           />
           <input
-            className="input is-small ml-2 has-tooltip-bottom"
+            className="searchbar input is-small ml-2 has-tooltip-bottom"
             type="text"
             value={searchBar}
             onChange={handleSearchBarChange}
@@ -108,7 +138,7 @@ export const Main = () => {
               type="checkbox"
               onChange={handleSwitchChange}
             />
-            <label for="switch"></label>
+            <label htmlFor="switch"></label>
           </div>
           <WalletButton setAccount={handleAccountChange} />
         </div>
@@ -117,18 +147,30 @@ export const Main = () => {
         !error ? (
           data ? (
             <>
-              <div className='account-info container card'>
-                <h1>address: {account}</h1>
-                <h1>total: {data.totalBalance}</h1>
-              </div>
               <TokenView
                 className="token-view"
                 data={data}
-                width={window.innerWidth}
-                height={640}
+                width={dimensions.width}
+                height={dimensions.height}
               />
-              <div className="token-list-wrapper container is-max-widescreen is-align-items-center">
+              <div className='account-info box container is-align-content-center'>
+                <h1>address: <a href={`https://etherscan.io/address/${account}`} target='_blank' rel='noreferrer'>{account}</a></h1>
+                <h1 className='is-flex is-flex-direction-row'>native (ETH): {data.native.toLocaleString()}
+                  <img src={ethSVG} alt='eth' size={16} width={16} />
+                </h1>
+                <h1>native ($): {data.nativeInUsd.toLocaleString()} $ </h1>
+                <h1>ERC-20 ($): {data.totalBalance.toLocaleString()} $</h1>
+              </div>
+              <div className="table-container">
                 <TokenTable data={data} />
+              </div>
+              <div className='chart-container'>
+                <Chart
+                    options={{backgroundColor: 'none', legend: { position: 'top', alignment: 'center' }}}
+                    chartType="PieChart"
+                    data={test}
+                    width={"100%"}
+                    height={"40rem"} />
               </div>
             </>
           ) : (

@@ -26,7 +26,9 @@ async function getData(address) {
   })
 
   // Format the native balance formatted in ether via the .ether getter
-  const native = nativeBalance.result.balance.ether
+  const native = Number(nativeBalance.result.balance.ether)
+  const eth_price = await getTokenPrice('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2');
+  const nativeInUsd = Number(eth_price * native)
 
   // Get token balances
   const tokenBalances = await Moralis.EvmApi.token.getWalletTokenBalances({
@@ -52,7 +54,7 @@ async function getData(address) {
   const promises = tokens.map(async (token) => {
     delay += delayIncrement;
     return new Promise(resolve => setTimeout(resolve, delay)).then(async () => {
-     const tokenPrice = await getTokenPrice(token.symbol, token.address);
+     const tokenPrice = await getTokenPrice(token.address);
      if (tokenPrice && tokenPrice <= 10**9) {
       totalValue = Number((token.balance * tokenPrice).toFixed(2));
       totalBalance += totalValue;
@@ -82,10 +84,10 @@ async function getData(address) {
   //   metadata: nft.result.metadata,
   // }))
 
-  return { native, tokens, maxValue, totalBalance }
+  return { native, nativeInUsd, tokens, maxValue, totalBalance }
 }
 
-async function getTokenPrice (name, address) {
+async function getTokenPrice (address) {
   let tokenPrice = null;
   try{ 
     const response = await Moralis.EvmApi.token.getTokenPrice({
