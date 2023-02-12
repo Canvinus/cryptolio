@@ -1,6 +1,6 @@
 export const TokenTable = ({data}) => {
     return (
-        <table className='table container is-hoverable is-fullwidth'>
+        <table className='table container is-bordered is-narrow is-hoverable'>
             <thead>
                 <tr>
                   <th>#</th>
@@ -29,7 +29,7 @@ export const TokenTable = ({data}) => {
                     <td>{token.balance.toLocaleString()}</td>
                     <td>{token.usdPrice}</td>
                     <td>{token.totalValue.toLocaleString()} $</td>
-                    <td>{token.pct}</td>
+                    <td>{token.pct.toLocaleString()}</td>
                 </tr>)}
               </tbody>
         </table>
