@@ -23,6 +23,10 @@ code {
   width: 100%;
 }
 
+.button {
+  width: 20vw;
+}
+
 .token-view {
   margin-top: 5.25rem;
   background-color: gainsboro;
@@ -40,7 +44,6 @@ code {
 .message-container {
   background: gainsboro;
   padding-top: 6.5rem;
-  padding-bottom: 38rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +67,6 @@ code {
 
 .content {
   padding-top: 6.5rem;
-  padding-bottom: 38rem;
   background-color: gainsboro;
 }
 

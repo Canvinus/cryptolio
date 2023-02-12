@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const SearchBar = ({handleSearch}) => {
+export const SearchBar = ({handleSearch, isMobile}) => {
     const [searchBar, setSearchBar] = useState("");
     const handleSearchBarChange = (e) => {
         setSearchBar(e.target.value);
@@ -16,17 +16,17 @@ export const SearchBar = ({handleSearch}) => {
     return (
         <>
             <input
-                className="searchbar input is-small ml-2 has-tooltip-bottom"
-                type="text"
+                className='searchbar input is-small ml-2 has-tooltip-bottom'
+                type='text'
                 value={searchBar}
                 onChange={handleSearchBarChange}
                 onKeyDown={handleKeyDown}
             />
             <button
-                className="button is-small ml-1 mr-5"
+                className={`button is-small ml-1 ${isMobile ? 'mr-1' : 'mr-5'}`}
                 onClick={handleClick}
             >
-                Search
+                {isMobile ? '🔍' : 'Search'}
             </button>
         </>
     );

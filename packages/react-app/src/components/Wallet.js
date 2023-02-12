@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { shortenAddress, useEthers, useLookupAddress } from "@usedapp/core";
 
-export const WalletButton = ({setAccount}) => {
+export const WalletButton = ({setAccount, isMobile}) => {
     const [rendered, setRendered] = useState("");
   
     const ens = useLookupAddress();
@@ -35,8 +35,9 @@ export const WalletButton = ({setAccount}) => {
             }
           }}
         >
-          {rendered === "" && "Connect Wallet"}
-          {rendered !== "" && rendered}
+          
+          {rendered === "" && (isMobile ? "Connect" : "Connect Wallet")}
+          {rendered !== "" && (isMobile ? rendered.substring(rendered.length - 7, rendered.length) : rendered)}
         </button>
       </>
     );

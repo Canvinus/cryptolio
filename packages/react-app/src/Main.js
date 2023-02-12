@@ -12,9 +12,10 @@ import { ErrorMessage } from "./components/utils/ErrorMessage";
 import { Chart } from "react-google-charts";
 import { SearchBar } from './components/SearchBar';
 
-export const Main = () => {
-  const NAV_WIDTH = 84;
+const NAV_WIDTH = 84;
+const MOBILE_WIDTH = 500;
 
+export const Main = () => {
   const [internalAcc, setInternalAcc] = useState(null);
   const handleAccountChange = (acc) => {
     setInternalAcc(acc);
@@ -98,30 +99,32 @@ export const Main = () => {
     <>
       <div className="navbar is-dark is-fixed-top is-flex">
         <div className="container is-align-items-center is-flex is-flex-direction-row is-max-widescreen">
-          <img
-            className="image mt-2 mb-4 mr-5"
-            src={logo}
-            alt="eth-logo"
-            width={32}
-            height={32}
-            onClick={clearData}
-          />
-          <SearchBar handleSearch={handleSearch}/>
+          {dimensions.width > MOBILE_WIDTH && 
+            <img
+              className='eth-logo image mt-2 mb-4 mr-5'
+              src={logo}
+              alt='eth-logo'
+              width={32}
+              height={32}
+              onClick={clearData}
+            />
+          }
+          <SearchBar isMobile={dimensions.width <= MOBILE_WIDTH} handleSearch={handleSearch}/>
           <div
-            className="field mr-4 mt-4 has-tooltip-bottom"
+            className={`field ${dimensions.width > MOBILE_WIDTH && 'mr-4'} mt-4 has-tooltip-bottom `}
             data-tooltip={
               internal ? switchTooltipText[1] : switchTooltipText[0]
             }
-          >
+          > 
             <input
               id="switch"
-              className="switch is-medium"
+              className={`switch ${dimensions.width > MOBILE_WIDTH ? 'is-medium' : 'is-small'}`}
               type="checkbox"
               onChange={handleSwitchChange}
             />
             <label htmlFor="switch"></label>
           </div>
-          <WalletButton setAccount={handleAccountChange} />
+          <WalletButton isMobile={dimensions.width <= MOBILE_WIDTH} setAccount={handleAccountChange} />
         </div>
       </div>
       {account ? (
