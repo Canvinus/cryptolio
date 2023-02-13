@@ -1,3 +1,7 @@
+## Description
+
+You can use it to display information about any Externally Owned Account on Ethereum Mainnet. Use the Search Bar to lookup for any EOA on the eth network or turn the switch on and connect your metamask wallet. The app was created using Moralis API, node.js, React.
+
 This project was bootstrapped with [Create Eth App](https://github.com/paulrberg/create-eth-app).
 
 ## Project Structure
