@@ -38,8 +38,8 @@ export const Main = () => {
   };
 
   const switchTooltipText = [
-    "Using external account",
-    "Using internal account",
+    "Use metamask",
+    "Using metamask",
   ];
   const [internal, setInternal] = useState(false);
   const handleSwitchChange = () => {
@@ -109,7 +109,7 @@ export const Main = () => {
               onClick={clearData}
             />
           }
-          <SearchBar isMobile={dimensions.width <= MOBILE_WIDTH} handleSearch={handleSearch}/>
+          <SearchBar placeholder='EOA address' isMobile={dimensions.width <= MOBILE_WIDTH} handleSearch={handleSearch}/>
           <div
             className={`field ${dimensions.width > MOBILE_WIDTH && 'mr-4'} mt-4 has-tooltip-bottom `}
             data-tooltip={
