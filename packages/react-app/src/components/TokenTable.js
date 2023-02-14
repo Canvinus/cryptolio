@@ -9,7 +9,7 @@ export const TokenTable = ({data}) => {
                   <th>Balance</th>
                   <th>USD Price</th>
                   <th>Total Value</th>
-                  <th>Percentile</th>
+                  <th>%</th>
                 </tr>
               </thead>
               <tbody>
@@ -29,7 +29,7 @@ export const TokenTable = ({data}) => {
                     <td>{token.balance.toLocaleString()}</td>
                     <td>{token.usdPrice}</td>
                     <td>{token.totalValue.toLocaleString()} $</td>
-                    <td>{token.pct.toLocaleString()}</td>
+                    <td>{(token.pct * 100).toLocaleString()}</td>
                 </tr>)}
               </tbody>
         </table>
