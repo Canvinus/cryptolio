@@ -79,3 +79,11 @@ code {
   padding-bottom: 2rem;
   background-color: gainsboro;
 }
+
+#navbar-bottom {
+  background-color: hsl(0 100% 100% / 0.01);
+}
+
+#slider-wrapper {
+  justify-content: center;
+}

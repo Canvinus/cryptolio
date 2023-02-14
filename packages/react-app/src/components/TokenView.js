@@ -12,7 +12,7 @@ export const TokenView = ({className, data, width, height}) => {
   return (
     <>
       <div className={className}>
-        <Stage  width={width} height={height}>
+        <Stage width={width} height={height}>
           <Layer>
           {
             data.tokens.map((token) => {
@@ -33,7 +33,9 @@ export const TokenView = ({className, data, width, height}) => {
           }
           </Layer>
         </Stage>
-        <Slider step='1' min='1' max='10' value={scale} onChange={handleScaleChange}  />
+      </div>
+      <div id='navbar-bottom' className='navbar is-fixed-bottom'>
+        <Slider id='token-view-slider' step='1' min='1' max='10' value={scale} onChange={handleScaleChange}  />
       </div>
     </>
   );
