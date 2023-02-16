@@ -9,6 +9,7 @@ const app = express()
 const port = 4000
 
 const chain = EvmChain.ETHEREUM
+const MAX_PRICE = 10**9
 
 // allow access to React app domain
 app.use(
@@ -17,6 +18,21 @@ app.use(
     credentials: true,
   })
 );
+
+async function getTokenPrice (address) {
+  let tokenPrice = null;
+  try{ 
+    const response = await Moralis.EvmApi.token.getTokenPrice({
+      address: address.toString(),
+      chain,
+    });
+    tokenPrice = response?.result.usdPrice;
+  }
+  catch(error){
+    tokenPrice = null;
+  }
+  return tokenPrice;
+}
 
 async function getData(address) {
   // Get native balance
@@ -46,8 +62,7 @@ async function getData(address) {
         address: _token.contractAddress._value,
         balance: Number(_balance.toFixed(2))
       }
-  });
-  tokens = tokens.filter((token) => token !== undefined)
+  }).filter((token) => token !== undefined);
 
   let totalBalance = 0;
   let delay = 0; const delayIncrement = 100;
@@ -55,21 +70,23 @@ async function getData(address) {
     delay += delayIncrement;
     return new Promise(resolve => setTimeout(resolve, delay)).then(async () => {
      const tokenPrice = await getTokenPrice(token.address);
-     if (tokenPrice && tokenPrice <= 10**9) {
+     if (tokenPrice && tokenPrice <= MAX_PRICE) {
       totalValue = Number((token.balance * tokenPrice).toFixed(2));
       totalBalance += totalValue;
       return { ...token, usdPrice: Number(tokenPrice), totalValue: totalValue };
       }
     })
   });
-  tokens = await Promise.all(promises);
-  tokens = tokens.filter((token) => token !== undefined)
-  tokens.sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1));
+
+  tokens = (await Promise.all(promises))
+    .filter((token) => token !== undefined)
+    .sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1));
 
   const maxValue = Math.max(...tokens.map(token => token.totalValue));
   tokens = tokens.map((token) => {
     return { ...token, pct: token.totalValue / totalBalance }
   });
+
   // // Get the nfts
   // const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
   //   address,
@@ -85,21 +102,6 @@ async function getData(address) {
   // }))
 
   return { native, nativeInUsd, tokens, maxValue, totalBalance }
-}
-
-async function getTokenPrice (address) {
-  let tokenPrice = null;
-  try{ 
-    const response = await Moralis.EvmApi.token.getTokenPrice({
-      address: address.toString(),
-      chain,
-    });
-    tokenPrice = response?.result.usdPrice;
-  }
-  catch(error){
-    tokenPrice = null;
-  }
-  return tokenPrice;
 }
 
 app.get("/getData", async (req, res) => {
