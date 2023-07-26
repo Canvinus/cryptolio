@@ -1,37 +1,27 @@
-const express = require("express")
-const cors = require("cors");
+const express = require('express')
+const cors = require('cors')
 
-const Moralis = require("moralis").default
-const { EvmChain } = require("@moralisweb3/common-evm-utils")
-const MORALIS_API_KEY = require("./config").MORALIS_API_KEY
+const Moralis = require('moralis').default
+const { EvmChain } = require('@moralisweb3/common-evm-utils')
 
 const app = express()
-const port = 4000
+const port = process.env.EXPRESS_PORT || 4000
 
 const chain = EvmChain.ETHEREUM
-const MAX_PRICE = 10**9
+const MAX_PRICE = 10 ** 9
 
-// allow access to React app domain
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  })
-);
-
-async function getTokenPrice (address) {
-  let tokenPrice = null;
-  try{ 
+async function getTokenPrice(address) {
+  let tokenPrice = null
+  try {
     const response = await Moralis.EvmApi.token.getTokenPrice({
       address: address.toString(),
       chain,
-    });
-    tokenPrice = response?.result.usdPrice;
+    })
+    tokenPrice = response?.result.usdPrice
+  } catch (error) {
+    tokenPrice = null
   }
-  catch(error){
-    tokenPrice = null;
-  }
-  return tokenPrice;
+  return tokenPrice
 }
 
 async function getData(address) {
@@ -43,7 +33,9 @@ async function getData(address) {
 
   // Format the native balance formatted in ether via the .ether getter
   const native = Number(nativeBalance.result.balance.ether)
-  const eth_price = await getTokenPrice('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2');
+  const eth_price = await getTokenPrice(
+    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+  )
   const nativeInUsd = Number(eth_price * native)
 
   // Get token balances
@@ -52,61 +44,57 @@ async function getData(address) {
     chain,
   })
 
-  let tokens = tokenBalances.result.map((token) => {
-    const _token = token._token;
-    const _balance = Number(token._value.amount.value) / 10**token._value.decimals;
-    if (_token.logo !== undefined)
-      return {
-        symbol: _token.symbol,
-        logo: _token.logo,
-        address: _token.contractAddress._value,
-        balance: Number(_balance.toFixed(2))
-      }
-  }).filter((token) => token !== undefined);
+  let tokens = []
+  tokenBalances.result.forEach((res) => {
+    if (res._token.logo !== undefined) {
+      tokens.push({
+        symbol: res._token.symbol,
+        logo: res._token.logo,
+        address: res._token.contractAddress._value,
+        balance: (
+          Number(res._value.amount.value) /
+          10 ** res._value.decimals
+        ).toFixed(2),
+      })
+    }
+  })
 
-  let totalBalance = 0;
-  let delay = 0; const delayIncrement = 100;
+  let totalBalance = 0
+  let delay = 0
+  const delayIncrement = 100
   const promises = tokens.map(async (token) => {
-    delay += delayIncrement;
-    return new Promise(resolve => setTimeout(resolve, delay)).then(async () => {
-     const tokenPrice = await getTokenPrice(token.address);
-     if (tokenPrice && tokenPrice <= MAX_PRICE) {
-      totalValue = Number((token.balance * tokenPrice).toFixed(2));
-      totalBalance += totalValue;
-      return { ...token, usdPrice: Number(tokenPrice), totalValue: totalValue };
+    delay += delayIncrement
+    return new Promise((resolve) => setTimeout(resolve, delay)).then(
+      async () => {
+        const tokenPrice = await getTokenPrice(token.address)
+        if (tokenPrice && tokenPrice <= MAX_PRICE) {
+          totalValue = Number((token.balance * tokenPrice).toFixed(2))
+          totalBalance += totalValue
+          return {
+            ...token,
+            usdPrice: Number(tokenPrice),
+            totalValue: totalValue,
+          }
+        }
       }
-    })
-  });
+    )
+  })
 
   tokens = (await Promise.all(promises))
     .filter((token) => token !== undefined)
-    .sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1));
+    .sort((a, b) => (a.totalValue > b.totalValue ? -1 : 1))
 
-  const maxValue = Math.max(...tokens.map(token => token.totalValue));
+  const maxValue = Math.max(...tokens.map((token) => token.totalValue))
   tokens = tokens.map((token) => {
     return { ...token, pct: token.totalValue / totalBalance }
-  });
-
-  // // Get the nfts
-  // const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
-  //   address,
-  //   chain,
-  //   limit: 10,
-  // })
-
-  // // Format the output to return name, amount and metadata
-  // const nfts = nftsBalances.result.map((nft) => ({
-  //   name: nft.result.name,
-  //   amount: nft.result.amount,
-  //   metadata: nft.result.metadata,
-  // }))
+  })
 
   return { native, nativeInUsd, tokens, maxValue, totalBalance }
 }
 
-app.get("/getData", async (req, res) => {
+app.get('/api/getData', async (req, res) => {
   try {
-    const address = req.query.address;
+    const address = req.query.address
     const data = await getData(address)
     res.status(200)
     return res.json(data)
@@ -120,7 +108,7 @@ app.get("/getData", async (req, res) => {
 
 const startServer = async () => {
   await Moralis.start({
-    apiKey: MORALIS_API_KEY,
+    apiKey: process.env.MORALIS_API_KEY,
   })
 
   app.listen(port, () => {

@@ -1,27 +1,14 @@
-import { BrowserRouter as Router } from 'react-router-dom';
-import { Main } from './Main';
-
-import axios from 'axios';
-
-const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-if (isDev) {
-  axios.defaults.baseURL = 'http://localhost:4000';
-} else {
-  axios.defaults.baseURL = 'https://agruz.dev/cryptolio/api';
-}
+import { BrowserRouter as Router } from 'react-router-dom'
+import { Main } from './Main'
 
 const App = () => {
   return (
     <>
-      {isDev ?
+      <Router basename={'/'}>
         <Main />
-        :
-        <Router basename="/cryptolio/">
-          <Main />
-        </Router>
-      }
+      </Router>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

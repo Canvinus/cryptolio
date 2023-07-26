@@ -1,0 +1,44 @@
+version: '3.5'
+
+services:
+  cryptolio-nginx:
+    image: nginx:latest
+    container_name: cryptolio-nginx
+    restart: always
+    ports:
+      - '127.0.0.1:${NGINX_PORT}:${NGINX_PORT}'
+    networks:
+      - nwk
+    volumes:
+      - ./nginx/:/etc/nginx/templates/
+    environment:
+      - NGINX_PORT=${NGINX_PORT}
+      - FRONT_PORT=${FRONT_PORT}
+      - EXPRESS_PORT=${EXPRESS_PORT}
+  cryptolio-react:
+    container_name: cryptolio-react
+    build:
+      context: packages/react-app
+    restart: always
+    ports:
+      - "127.0.0.1:${FRONT_PORT}:${FRONT_PORT}"
+    networks:
+      - nwk
+    environment:
+      - FRONT_PORT=${FRONT_PORT}
+  cryptolio-express:
+    container_name: cryptolio-express
+    build: 
+      context: packages/nodejs-app
+    restart: always
+    networks:
+      - nwk
+    ports:
+      - '127.0.0.1:${EXPRESS_PORT}:${EXPRESS_PORT}'
+    environment:
+      - 'EXPRESS_PORT=${EXPRESS_PORT}'
+      - 'MORALIS_API_KEY=${MORALIS_API_KEY}'
+
+networks:
+  nwk:
+    driver: bridge
