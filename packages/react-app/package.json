@@ -50,5 +50,8 @@
     "ipfs": "yarn build && ipfs-deploy build/",
     "start": "PORT=${FRONT_PORT} react-scripts start",
     "test": "react-scripts test"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
