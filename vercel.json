@@ -1,0 +1,30 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "packages/node-app/index.js",
+        "use": "@vercel/node"
+      },
+      {
+        "src": "packages/react-app/package.json",
+        "use": "@vercel/static-build",
+        "config": {
+          "distDir": "build"
+        }
+      }
+    ],
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "/api/express-app/index.js"
+      },
+      {
+        "src": "/(.*).(js|css|json|ico|svg|png|jpg)",
+        "dest": "/react-app/$1.$2"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/react-app/index.html"
+      }
+    ]
+  }
